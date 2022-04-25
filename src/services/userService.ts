@@ -1,11 +1,11 @@
-import { Users } from "@prisma/client";
-import dotenv from "dotenv";
+import { User } from ".prisma/client";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 dotenv.config();
 
-export type CreateUserData = Omit<Users, "id">;
+export type CreateUserData = Omit<User, "id">;
 async function insert(createUserData: CreateUserData) {
   const existingUser = await userRepository.findByEmail(createUserData.email);
   if (existingUser)
@@ -16,13 +16,13 @@ async function insert(createUserData: CreateUserData) {
   await userRepository.insert({ ...createUserData, password: hashedPassword });
 }
 
-async function findById(id: number) {
-  const user = await userRepository.findById(id);
-  if (!user) throw { type: "not_found" };
+// async function findById(id: number) {
+//   const user = await userRepository.findById(id);
+//   if (!user) throw { type: "not_found" };
 
-  delete user.password;
-  return user;
-}
+//   delete user.password;
+//   return user;
+// }
 
 async function signIn({ email, password }: CreateUserData) {
   const user = await userRepository.findByEmail(email);
@@ -38,6 +38,6 @@ async function signIn({ email, password }: CreateUserData) {
 
 export default {
   insert,
-  findById,
   signIn,
+  // findById,
 };
