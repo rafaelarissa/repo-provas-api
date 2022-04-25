@@ -1,6 +1,7 @@
 import { Users } from "@prisma/client";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 dotenv.config();
 
@@ -15,6 +16,28 @@ async function insert(createUserData: CreateUserData) {
   await userRepository.insert({ ...createUserData, password: hashedPassword });
 }
 
+async function findById(id: number) {
+  const user = await userRepository.findById(id);
+  if (!user) throw { type: "not_found" };
+
+  delete user.password;
+  return user;
+}
+
+async function signIn({ email, password }: CreateUserData) {
+  const user = await userRepository.findByEmail(email);
+  if (!user) throw { type: "unauthorized", message: "Invalid credentials" };
+
+  const isPasswordValid = bcrypt.compareSync(password, user.password);
+  if (!isPasswordValid)
+    throw { type: "unauthorized", message: "Invalid credentials" };
+
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+  return token;
+}
+
 export default {
   insert,
+  findById,
+  signIn,
 };

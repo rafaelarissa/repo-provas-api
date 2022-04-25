@@ -9,10 +9,10 @@ userRouter.post(
   validateSchemaMiddleware(userSchema),
   userController.signUp
 );
-// userRouter.post(
-//   "/sign-in",
-//   validateSchemaMiddleware(userSchema),
-//   userController.signIn
-// );
+userRouter.post(
+  "/sign-in",
+  validateSchemaMiddleware(userSchema),
+  userController.signIn
+);
 
 export default userRouter;
