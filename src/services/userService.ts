@@ -1,7 +1,7 @@
 import { Users } from "@prisma/client";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
-import userRepository from "../repositories/userRepository";
+import userRepository from "../repositories/userRepository.js";
 dotenv.config();
 
 export type CreateUserData = Omit<Users, "id">;
